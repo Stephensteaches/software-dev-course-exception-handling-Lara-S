@@ -32,20 +32,36 @@ const readlineSync = require('readline-sync');
 // Initial Code with Bugs (modified to use readline-sync)
 let animals = [];
 let fees = [];
+
+
 function addAnimal(name, fee) {
+try {
     if (!name || fee < 0) {
         throw new Error("Invalid animal name or adoption fee!");
     }
-    animals.push(name);
-    fees.push(fee);
+    animals.push (name);
+    fees.push (fee);
+    console.log(`${name} added with a fee of $${fee}.`);
+} catch (error) {
+    console.log (animals);
+    console.log (`Error: ${error.message}`);
 }
+}
+
 function getAdoptionFee(animalName) {
+try {
     let index = animals.indexOf(animalName);
     if (index === -1) {
         throw new Error("Animal not found in records!");
     }
+     console.log(`${animalName}'s adoption fee is $${getAdoptionFee(animalName)}.`);
     return fees[index];
+}catch (error) {
+    //console.log (fees);
+    console.log (`Error: ${error.message}`);
 }
+}
+
 // Main program
 console.log("Welcome to the Pet Shelter System");
 while (true) {
@@ -54,30 +70,40 @@ while (true) {
         console.log("Goodbye!");
         break;
     }
-    if (action === "add") {
-        let animal = readlineSync.question("Enter the animal's name: ");
-        let fee = Number(readlineSync.question("Enter the adoption fee: "));
-        addAnimal(animal, fee);
-        console.log(`${animal} added with a fee of $${fee}.`);
-    } else if (action === "fee") {
+
+        if (action === "add") {
+            let animal = readlineSync.question("Enter the animal's name: ");
+            let fee = Number(readlineSync.question("Enter the adoption fee: "));
+            addAnimal(animal, fee);
+            //console.log(`${animal} added with a fee of $${fee}.`);
+        } 
+        else if (action === "fee") {
         let animal = readlineSync.question("Enter the animal's name to find its adoption fee: ");
-        console.log(`${animal}'s adoption fee is $${getAdoptionFee(animal)}.`);
-    } else {
+       //console.log(`${animal}'s adoption fee is $${getAdoptionFee(animal)}.`);
+        } else {
         console.log("Invalid action. Please choose 'add', 'fee', or 'exit'.");
     }
 }
-
-
 
 /*
 Problems to Solve
 
 Invalid Input Errors:
   What happens if the user provides a negative adoption fee or leaves the name blank?
+  --When no name is provided or a negative fee is entered, the program throws
+  --Error: Invalid animal name or adoption fee!
+  --This happens in the addAnimal function when it is called during the add action in the main program.
   What happens if the user tries to find the fee for an animal that hasn’t been added?
+  --When an animal is not found, the program throws Error: Animal not found in records!
+  --This happens inside the getAdoptionFee function when it is called during the fee action in the main program.
+
+  --If I add in a weird fee like letters instead of a number in the add action, 
+  --the program does not throw an error because Number("letters") results in NaN, which is less than 0.
+  --What will happen is that when the fee for that animal is requested it will result in a $NaN, a logic error.
 
 Code Flow Problems:
   What happens if the program throws an exception? Does the rest of the code continue running?
+  --If the program throws an exception, the program will halt and an error object will be recorded in the terminal screen.
 
 Structured Exception Handling:
   Add try/catch blocks to handle the above errors gracefully.
